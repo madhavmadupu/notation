@@ -2,13 +2,6 @@ import { router } from 'expo-router';
 import {
     ChevronLeft,
     PencilRuler,
-    Bold,
-    List,
-    CheckSquare,
-    Code,
-    Heading1,
-    Heading2,
-    Heading3,
 } from 'lucide-react-native';
 import {
     View,
@@ -24,6 +17,7 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '~/constants/colors';
+import NotesToolBar from '~/components/NotesToolBar'; // ✅ make sure this is imported
 
 const formatDate = (date: Date) => {
     const options = {
@@ -39,21 +33,56 @@ const NewNote = () => {
     const todayFormatted = formatDate(new Date());
     const titleInputRef = useRef<TextInput>(null);
     const noteInputRef = useRef<TextInput>(null);
+    const [noteContent, setNoteContent] = useState('');
+    const [styles, setStyles] = useState({
+        bold: false,
+        italic: false,
+        underline: false,
+    });
 
     useEffect(() => {
         const hideSub = Keyboard.addListener('keyboardDidHide', () => {
             titleInputRef.current?.blur();
             noteInputRef.current?.blur();
         });
-
         return () => hideSub.remove();
     }, []);
 
+    // ✅ Example placeholder functions
+    const toggleStyle = (type: keyof typeof styles) => {
+        setStyles((prev) => ({ ...prev, [type]: !prev[type] }));
+    };
+
+    const toggleBlockType = (type: string) => {
+        console.log('Set block type:', type);
+    };
+
+    const insertTodoBlock = () => {
+        console.log('Insert Todo Block');
+    };
+
+    const insertMention = () => {
+        console.log('Insert Mention');
+    };
+
+    const insertImage = () => {
+        console.log('Insert Image');
+    };
+
+    const insertComment = () => {
+        console.log('Insert Comment');
+    };
+
+    const deleteBlock = () => {
+        setNoteContent('');
+    };
+
+    const addNewBlock = () => {
+        setNoteContent((prev) => prev + '\n');
+    };
+
     return (
-        <SafeAreaView
-            className="flex-1"
-            style={{ backgroundColor: Colors.offwhite }}
-        >
+        <SafeAreaView className="flex-1" style={{ backgroundColor: Colors.offwhite }}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <KeyboardAvoidingView
                     className="flex-1"
@@ -62,7 +91,7 @@ const NewNote = () => {
                 >
                     <View className="flex-1 justify-between">
                         <ScrollView
-                            contentContainerStyle={{ paddingBottom: 16 }}
+                            contentContainerStyle={{ paddingBottom: 120 }}
                             keyboardShouldPersistTaps="handled"
                             showsVerticalScrollIndicator={false}
                         >
@@ -122,50 +151,35 @@ const NewNote = () => {
                                     autoCapitalize="sentences"
                                     autoCorrect
                                     scrollEnabled
+                                    value={noteContent}
+                                    onChangeText={setNoteContent}
                                     style={{
                                         fontFamily: 'LexendDeca',
                                         color: Colors.black,
                                         lineHeight: 24,
                                         minHeight: 500,
                                         paddingBottom: 40,
+                                        fontWeight: styles.bold ? 'bold' : 'normal',
+                                        fontStyle: styles.italic ? 'italic' : 'normal',
+                                        textDecorationLine: styles.underline ? 'underline' : 'none',
                                     }}
                                 />
                             </View>
                         </ScrollView>
 
-                        {/* Bottom Formatting Toolbar */}
-                        <View className="px-4 pb-4">
-                            <ScrollView
-                                horizontal
-                                className="p-2 bg-white border border-gray-200 rounded-xl shadow-sm"
-                                contentContainerStyle={{ alignItems: 'center', gap: 8 }}
-                                keyboardShouldPersistTaps="handled"
-                                showsHorizontalScrollIndicator={false}
-                                keyboardDismissMode="on-drag"
-                            >
-                                <Pressable className="border border-gray-200 rounded-lg p-2">
-                                    <Bold size={22} color={Colors.black} />
-                                </Pressable>
-                                <Pressable className="border border-gray-200 rounded-lg p-2">
-                                    <Heading1 size={22} color={Colors.black} />
-                                </Pressable>
-                                <Pressable className="border border-gray-200 rounded-lg p-2">
-                                    <Heading2 size={22} color={Colors.black} />
-                                </Pressable>
-                                <Pressable className="border border-gray-200 rounded-lg p-2">
-                                    <Heading3 size={22} color={Colors.black} />
-                                </Pressable>
-                                <Pressable className="border border-gray-200 rounded-lg p-2">
-                                    <List size={22} color={Colors.black} />
-                                </Pressable>
-                                <Pressable className="border border-gray-200 rounded-lg p-2">
-                                    <CheckSquare size={22} color={Colors.black} />
-                                </Pressable>
-                                <Pressable className="border border-gray-200 rounded-lg p-2">
-                                    <Code size={22} color={Colors.black} />
-                                </Pressable>
-                            </ScrollView>
-                        </View>
+                        {/* ✅ Notes Tool Bar (floating above keyboard) */}
+                        <NotesToolBar
+                            onBold={() => toggleStyle('bold')}
+                            onItalic={() => toggleStyle('italic')}
+                            onUnderline={() => toggleStyle('underline')}
+                            onHeading1={() => toggleBlockType('heading1')}
+                            onTodo={insertTodoBlock}
+                            onMention={insertMention}
+                            onImage={insertImage}
+                            onComment={insertComment}
+                            onDelete={deleteBlock}
+                            onAddBlock={addNewBlock}
+                        />
                     </View>
                 </KeyboardAvoidingView>
             </TouchableWithoutFeedback>
