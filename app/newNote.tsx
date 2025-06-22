@@ -1,5 +1,15 @@
 import { router } from 'expo-router';
-import { ChevronLeft, PencilRuler } from 'lucide-react-native';
+import {
+    ChevronLeft,
+    PencilRuler,
+    Bold,
+    List,
+    CheckSquare,
+    Code,
+    Heading1,
+    Heading2,
+    Heading3,
+} from 'lucide-react-native';
 import {
     View,
     Text,
@@ -11,7 +21,7 @@ import {
     KeyboardAvoidingView,
     Platform,
 } from 'react-native';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '~/constants/colors';
 
@@ -41,7 +51,7 @@ const NewNote = () => {
 
     return (
         <SafeAreaView
-            className="flex-1 py-2"
+            className="flex-1"
             style={{ backgroundColor: Colors.offwhite }}
         >
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -50,78 +60,113 @@ const NewNote = () => {
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                     keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}
                 >
-                    <ScrollView
-                        contentContainerStyle={{ paddingBottom: 100 }}
-                        keyboardShouldPersistTaps="handled"
-                        showsVerticalScrollIndicator={false}
-                    >
-                        {/* Header */}
-                        <View className="flex-row items-center justify-between px-4 mb-4">
-                            <Pressable
-                                className="rounded-full shadow-md"
-                                onPress={() => router.back()}
+                    <View className="flex-1 justify-between">
+                        <ScrollView
+                            contentContainerStyle={{ paddingBottom: 16 }}
+                            keyboardShouldPersistTaps="handled"
+                            showsVerticalScrollIndicator={false}
+                        >
+                            {/* Header */}
+                            <View className="flex-row items-center justify-between px-4 pt-2 mb-4">
+                                <Pressable
+                                    className="rounded-full shadow-md"
+                                    onPress={() => router.back()}
+                                >
+                                    <ChevronLeft size={28} color={Colors.black} strokeWidth={1.5} />
+                                </Pressable>
+
+                                <Pressable className="p-3 rounded-full bg-white shadow-md">
+                                    <PencilRuler size={28} color={Colors.black} strokeWidth={1.5} />
+                                </Pressable>
+                            </View>
+
+                            {/* Title */}
+                            <View className="px-4 mb-2">
+                                <TextInput
+                                    ref={titleInputRef}
+                                    className="text-4xl"
+                                    multiline
+                                    placeholder="New Note"
+                                    scrollEnabled={false}
+                                    style={{
+                                        color: Colors.black,
+                                        fontFamily: 'LexendDeca',
+                                    }}
+                                    selectionColor={Colors.lime}
+                                    cursorColor={Colors.black}
+                                />
+                                <Text
+                                    className="text-lg pl-1"
+                                    style={{
+                                        color: Colors.black,
+                                        fontFamily: 'LexendDeca',
+                                        opacity: 0.6,
+                                    }}
+                                >
+                                    {todayFormatted}
+                                </Text>
+                            </View>
+
+                            {/* Note Body */}
+                            <View className="px-4">
+                                <TextInput
+                                    ref={noteInputRef}
+                                    placeholder="Write your note here..."
+                                    multiline
+                                    textAlignVertical="top"
+                                    returnKeyType="default"
+                                    selectionColor={Colors.lime}
+                                    cursorColor={Colors.black}
+                                    keyboardAppearance="dark"
+                                    keyboardType="default"
+                                    autoCapitalize="sentences"
+                                    autoCorrect
+                                    scrollEnabled
+                                    style={{
+                                        fontFamily: 'LexendDeca',
+                                        color: Colors.black,
+                                        lineHeight: 24,
+                                        minHeight: 500,
+                                        paddingBottom: 40,
+                                    }}
+                                />
+                            </View>
+                        </ScrollView>
+
+                        {/* Bottom Formatting Toolbar */}
+                        <View className="px-4 pb-4">
+                            <ScrollView
+                                horizontal
+                                className="p-2 bg-white border border-gray-200 rounded-xl shadow-sm"
+                                contentContainerStyle={{ alignItems: 'center', gap: 8 }}
+                                keyboardShouldPersistTaps="handled"
+                                showsHorizontalScrollIndicator={false}
+                                keyboardDismissMode="on-drag"
                             >
-                                <ChevronLeft size={28} color={Colors.black} strokeWidth={1.5} />
-                            </Pressable>
-
-                            <Pressable className="p-3 rounded-full bg-white shadow-md">
-                                <PencilRuler size={28} color={Colors.black} strokeWidth={1.5} />
-                            </Pressable>
+                                <Pressable className="border border-gray-200 rounded-lg p-2">
+                                    <Bold size={22} color={Colors.black} />
+                                </Pressable>
+                                <Pressable className="border border-gray-200 rounded-lg p-2">
+                                    <Heading1 size={22} color={Colors.black} />
+                                </Pressable>
+                                <Pressable className="border border-gray-200 rounded-lg p-2">
+                                    <Heading2 size={22} color={Colors.black} />
+                                </Pressable>
+                                <Pressable className="border border-gray-200 rounded-lg p-2">
+                                    <Heading3 size={22} color={Colors.black} />
+                                </Pressable>
+                                <Pressable className="border border-gray-200 rounded-lg p-2">
+                                    <List size={22} color={Colors.black} />
+                                </Pressable>
+                                <Pressable className="border border-gray-200 rounded-lg p-2">
+                                    <CheckSquare size={22} color={Colors.black} />
+                                </Pressable>
+                                <Pressable className="border border-gray-200 rounded-lg p-2">
+                                    <Code size={22} color={Colors.black} />
+                                </Pressable>
+                            </ScrollView>
                         </View>
-
-                        {/* Title */}
-                        <View className="px-4 mb-2">
-                            <TextInput
-                                ref={titleInputRef}
-                                className="text-4xl"
-                                multiline
-                                placeholder="New Note"
-                                scrollEnabled={false}
-                                style={{
-                                    color: Colors.black,
-                                    fontFamily: 'LexendDeca',
-                                }}
-                                selectionColor={Colors.lime}
-                                cursorColor={Colors.black}
-                                blurOnSubmit
-                            />
-                            <Text
-                                className="text-lg pl-1"
-                                style={{
-                                    color: Colors.black,
-                                    fontFamily: 'LexendDeca',
-                                    opacity: 0.6,
-                                }}
-                            >
-                                {todayFormatted}
-                            </Text>
-                        </View>
-
-                        {/* Note Body */}
-                        <View className="px-4">
-                            <TextInput
-                                ref={noteInputRef}
-                                placeholder="Write your note here..."
-                                multiline
-                                textAlignVertical="top"
-                                returnKeyType="default" // or 'newline'
-                                selectionColor={Colors.lime}
-                                cursorColor={Colors.black}
-                                keyboardAppearance="dark"
-                                keyboardType="default"
-                                autoCapitalize="sentences"
-                                autoCorrect
-                                scrollEnabled
-                                style={{
-                                    fontFamily: 'LexendDeca',
-                                    color: Colors.black,
-                                    lineHeight: 24,
-                                    minHeight: 600,
-                                    paddingBottom: 40,
-                                }}
-                            />
-                        </View>
-                    </ScrollView>
+                    </View>
                 </KeyboardAvoidingView>
             </TouchableWithoutFeedback>
         </SafeAreaView>
